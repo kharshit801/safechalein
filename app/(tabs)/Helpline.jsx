@@ -9,7 +9,7 @@ const helplineData = [
   { id: '4', number: '101', title: 'Fire Service', icon: 'flame' },
   { id: '5', number: '100', title: 'Police', icon: 'shield' },
   { id: '6', number: '1091', title: 'Women helpline', icon: 'people' },
-  { id: '7', number: '1098', title: 'Child Helpline', icon: 'happy' },
+  { id: '7', number: '1098', title: 'Child Helpline', icon: 'child' },
   { id: '8', number: '1073', title: 'Road accident', icon: 'car' },
   { id: '9', number: '182', title: 'Railway protection', icon: 'train' },
 ];
