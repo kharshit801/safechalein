@@ -7,6 +7,26 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [keepSignedIn, setKeepSignedIn] = useState(false);
+<<<<<<< HEAD
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      // const response = await axios.post('http://172.29.49.198:8080/user/login', {
+      //   email: email,
+      //   password: password,
+      // });
+      // setSuccessMessage('Logged in successfully!');
+      // setErrorMessage('');
+      router.replace("(tabs)");
+    } catch (error) {
+      setErrorMessage(error.response?.data.message || 'An error occurred during login.');
+      setSuccessMessage('');
+    }
+  };
+=======
+>>>>>>> bc2db94d58e9b288c1c3962a2088508009349da9
 
   return (
     <SafeAreaView style={styles.container}>

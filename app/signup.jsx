@@ -8,6 +8,29 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+<<<<<<< HEAD
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState(''); 
+
+  const handleSignup = async () => {
+    try {
+      const response = await axios.post('http://172.29.49.198:8080/user/signup', {
+        fullname: fullname,
+        email:email,
+        password:password,
+      });
+      console.log(response.data);
+      setSuccessMessage('Account created successfully!'); 
+      setErrorMessage(''); 
+      router.replace("(tabs)"); 
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(error.response?.data.message || 'An error occurred during signup.'); 
+      setSuccessMessage('');
+    }
+  };
+=======
+>>>>>>> bc2db94d58e9b288c1c3962a2088508009349da9
 
   return (
     <SafeAreaView style={styles.container}>

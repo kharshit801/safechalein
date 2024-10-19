@@ -31,6 +31,7 @@ const HomeScreen = () => {
           <View style={styles.content}>
             <AppMapview />
           </View>
+        
           <TouchableOpacity style={styles.sosButton} onPress={handleSOSPress}>
             <Text style={styles.sosButtonText}>SOS</Text>
           </TouchableOpacity>
@@ -100,5 +101,24 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: wp('5%'),
     fontWeight: 'bold',
+  },
+  sosButton2: {
+    position: 'absolute',
+    right: wp('5%'),
+    bottom: hp('3%'),
+    backgroundColor: '#DB2B39',
+    borderRadius: wp('10%'),
+    width: wp('20%'),
+    height: wp('20%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
