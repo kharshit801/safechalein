@@ -2,6 +2,8 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity,Image, StyleSheet, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -12,13 +14,16 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      // const response = await axios.post('http://172.29.49.198:8080/user/login', {
-      //   email: email,
-      //   password: password,
-      // });
-      // setSuccessMessage('Logged in successfully!');
-      // setErrorMessage('');
+      const response = await axios.post('http://172.29.49.198:8080/user/login', {
+        email: email,
+        password: password,
+      });
+      const { token } = response.data;
+      await AsyncStorage.setItem('jwtToken', token);
+      setSuccessMessage('Logged in successfully!');
+      setErrorMessage('');
       router.replace("(tabs)");
+      
     } catch (error) {
       setErrorMessage(error.response?.data.message || 'An error occurred during login.');
       setSuccessMessage('');

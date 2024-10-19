@@ -18,6 +18,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const HomeScreen = () => {
+  const generateRandomCode = () => {
+    return Math.floor(1000 + Math.random() * 9000); 
+  };
+
   const handleSOSPress = () => {
     Alert.alert("SOS", "Are you sure you want to send an SOS?", [
       {
