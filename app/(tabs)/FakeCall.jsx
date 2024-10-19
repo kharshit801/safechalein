@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Vibration, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Vibration, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
+import { Camera } from 'lucide-react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import IncomingCallScreen from './../widget/incomingcall'; // Make sure this file exists in your project
 
 const FakeCallScreen = () => {
   const [name, setName] = useState('');
@@ -46,7 +47,7 @@ const FakeCallScreen = () => {
         }
       );
       setSound(ringSound);
-      await ringSound.playAsync();
+      await ringSound.playAsync(); // Explicitly start playing the sound
     } catch (error) {
       console.error('Error playing ringtone:', error);
       alert('Failed to play ringtone. Please check your device settings.');
@@ -76,7 +77,9 @@ const FakeCallScreen = () => {
     setTimeout(async () => {
       try {
         await playRingtone();
+        // Start vibration
         Vibration.vibrate([1000, 2000, 1000], true);
+        // Show incoming call screen
         setShowIncomingCall(true);
       } catch (error) {
         console.error('Error starting fake call:', error);
@@ -100,20 +103,11 @@ const FakeCallScreen = () => {
     }
   };
 
-  if (showIncomingCall) {
-    return (
-      <IncomingCallScreen
-        caller={{ name, number, image: selectedImage }}
-        onAccept={handleEndCall}
-        onDecline={handleEndCall}
-      />
-    );
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
+         
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Caller Details</Text>
             <Text style={styles.headerSubtitle}>
@@ -206,13 +200,47 @@ const FakeCallScreen = () => {
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity 
-            style={styles.callMeButton}
-            onPress={startFakeCall}
-          >
-            <Text style={styles.callMeButtonText}>Call Me</Text>
-          </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.callMeButton}
+          onPress={startFakeCall}
+        >
+          <Text style={styles.callMeButtonText}>Call Me</Text>
+        </TouchableOpacity>
+      </View>
+
+        {/* Incoming Call Modal */}
+        <Modal
+        visible={showIncomingCall}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.callCard}>
+            <View style={styles.callerInfo}>
+              <View style={styles.callerImage}>
+                <Text style={styles.callerImageText}>👤</Text>
+              </View>
+              <Text style={styles.callerName}>{name}</Text>
+              <Text style={styles.callerNumber}>{number}</Text>
+            </View>
+            
+            <View style={styles.callActions}>
+              <TouchableOpacity 
+                style={styles.declineButton}
+                onPress={handleEndCall}
+              >
+                <Text style={styles.declineButtonText}>Decline</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.acceptButton}
+                onPress={handleEndCall}
+              >
+                <Text style={styles.acceptButtonText}>Accept</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
+      </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -232,6 +260,13 @@ const styles = StyleSheet.create({
     paddingBottom: hp('2%'),
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
+  },
+  backButton: {
+    marginBottom: hp('1%'),
+  },
+  backButtonText: {
+    fontSize: wp('6%'),
+    color: '#333',
   },
   headerTextContainer: {
     gap: hp('0.5%'),
@@ -273,9 +308,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: hp('1%'),
-  },
-  iconText: {
-    fontSize: wp('8%'),
   },
   optionLabel: {
     fontSize: wp('3.5%'),
@@ -333,8 +365,18 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',
   },
-  callMeButton: {
-    backgroundColor: '#4CAF50',
+  saveButton: {
+    backgroundColor: '#6B63F6',
+    paddingVertical: hp('2%'),
+    borderRadius: wp('6%'),
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: wp('4%'),
+    fontWeight: '600',
+  },callMeButton: {
+    backgroundColor: '#4CAF50', // Changed to green for "Call Me"
     paddingVertical: hp('2%'),
     borderRadius: wp('6%'),
     alignItems: 'center',
@@ -344,6 +386,72 @@ const styles = StyleSheet.create({
     fontSize: wp('4%'),
     fontWeight: '600',
   },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  callCard: {
+    backgroundColor: '#fff',
+    width: wp('90%'),
+    borderRadius: wp('5%'),
+    padding: wp('6%'),
+    alignItems: 'center',
+  },
+  callerInfo: {
+    alignItems: 'center',
+    marginBottom: hp('4%'),
+  },
+  callerImage: {
+    width: wp('25%'),
+    height: wp('25%'),
+    backgroundColor: '#f0f0f0',
+    borderRadius: wp('12.5%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: hp('2%'),
+  },
+  callerImageText: {
+    fontSize: wp('10%'),
+  },
+  callerName: {
+    fontSize: wp('6%'),
+    fontWeight: 'bold',
+    marginBottom: hp('1%'),
+  },
+  callerNumber: {
+    fontSize: wp('4%'),
+    color: '#666',
+  },
+  callActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  declineButton: {
+    backgroundColor: '#FF3B30',
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('8%'),
+    borderRadius: wp('6%'),
+  },
+  acceptButton: {
+    backgroundColor: '#4CD964',
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('8%'),
+    borderRadius: wp('6%'),
+  },
+  declineButtonText: {
+    color: '#fff',
+    fontSize: wp('4%'),
+    fontWeight: '600',
+  },
+  acceptButtonText: {
+    color: '#fff',
+    fontSize: wp('4%'),
+    fontWeight: '600',
+  },
 });
+  
 
 export default FakeCallScreen;
