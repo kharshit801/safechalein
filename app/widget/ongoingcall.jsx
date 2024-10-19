@@ -1,40 +1,129 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, StatusBar } from 'react-native';
+import React, {useState,useEffect} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, StatusBar, SafeAreaView } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
+import Timer from './timer';
 
-const OngoingCallScreen = ({ caller, onEndCall, onToggleMute, onToggleSpeaker, isMuted, isSpeakerOn }) => {
+const OngoingCallScreen = ({ 
+  calls, 
+  isConferenceActive, 
+  onHoldCall, 
+  onEndCall, 
+  onStartConference, 
+  onEndConference,
+
+  onKeypad,
+  onAddCall
+}) => {
+  const [isMuted, setIsMuted] = React.useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(false);
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={['#4c669f', '#3b5998', '#192f6a']}
-        style={styles.gradient}
-      >
+      <BlurView intensity={100} tint="dark" style={styles.blurContainer}>
         <View style={styles.callerInfo}>
-          {caller.image ? (
-            <Image source={{ uri: caller.image }} style={styles.callerImage} />
-          ) : (
-            <View style={styles.callerImagePlaceholder}>
-              <Text style={styles.callerImagePlaceholderText}>{caller.name.charAt(0)}</Text>
+          {calls.map((call, index) => (
+            <View key={call.id} style={styles.callerContainer}>
+              {call.image ? (
+                <Image source={{ uri: call.image }} style={styles.callerImage} />
+              ) : (
+                <View style={styles.callerImagePlaceholder}>
+                  <Text style={styles.callerImagePlaceholderText}>
+                    {call.name.charAt(0)}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.callerName}>{call.name}</Text>
+              <Timer startTime={call.startTime} style={styles.timer} />
+              <Text style={styles.callStatus}>
+                {call.isOnHold ? 'On Hold' : 'Connected'}
+              </Text>
             </View>
-          )}
-          <Text style={styles.callerName}>{caller.name}</Text>
-          <Text style={styles.callStatus}>Ongoing call</Text>
+          ))}
         </View>
-        <View style={styles.ongoingButtonContainer}>
-          <TouchableOpacity style={styles.circleButton} onPress={onToggleMute}>
-            <Text style={styles.buttonIcon}>{isMuted ? '🔇' : '🎤'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.circleButton} onPress={onToggleSpeaker}>
-            <Text style={styles.buttonIcon}>{isSpeakerOn ? '🔊' : '🔈'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.circleButton, styles.endCallButton]} onPress={onEndCall}>
-            <Text style={styles.buttonIcon}>📞</Text>
+
+        <View style={styles.controlsContainer}>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity 
+              style={styles.circleButton} 
+              onPress={() => {
+                setIsMuted(!isMuted);
+                // onMute(!isMuted);
+              }}
+            >
+              <Ionicons name={isMuted ? "mic-off" : "mic"} size={24} color="#ffffff" />
+              <Text style={styles.buttonText}>Mute</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.circleButton} 
+              onPress={onKeypad}
+            >
+              <Ionicons name="keypad" size={24} color="#ffffff" />
+              <Text style={styles.buttonText}>Keypad</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.circleButton} 
+              onPress={() => {
+                setIsSpeakerOn(!isSpeakerOn);
+                // onSpeaker(!isSpeakerOn);
+              }}
+            >
+              <Ionicons name={isSpeakerOn ? "volume-high" : "volume-off"} size={24} color="#ffffff" />
+              <Text style={styles.buttonText}>Speaker</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.buttonRow}>
+            {calls.length < 5 && (
+              <TouchableOpacity 
+                style={styles.circleButton} 
+                onPress={onAddCall}
+              >
+                <Ionicons name="add" size={24} color="#ffffff" />
+                <Text style={styles.buttonText}>Add Call</Text>
+              </TouchableOpacity>
+            )}
+            {!isConferenceActive && calls.length > 1 && (
+              <TouchableOpacity 
+                style={styles.circleButton} 
+                onPress={onStartConference}
+              >
+                <Ionicons name="people" size={24} color="#ffffff" />
+                <Text style={styles.buttonText}>Merge</Text>
+              </TouchableOpacity>
+            )}
+            {isConferenceActive && (
+              <TouchableOpacity 
+                style={styles.circleButton} 
+                onPress={onEndConference}
+              >
+                <Ionicons name="people" size={24} color="#ffffff" />
+                <Text style={styles.buttonText}>Split</Text>
+              </TouchableOpacity>
+            )}
+            {!isConferenceActive && calls.map((call) => (
+              <TouchableOpacity 
+                key={call.id}
+                style={styles.circleButton} 
+                onPress={() => onHoldCall(call.id)}
+              >
+                <Ionicons name={call.isOnHold ? "play" : "pause"} size={24} color="#ffffff" />
+                <Text style={styles.buttonText}>{call.isOnHold ? 'Resume' : 'Hold'}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity 
+            style={[styles.circleButton, styles.endCallButton]} 
+            onPress={() => calls.forEach(call => onEndCall(call.id))}
+          >
+            <Ionicons name="call" size={30} color="#ffffff" />
           </TouchableOpacity>
         </View>
-      </LinearGradient>
-    </View>
+      </BlurView>
+    </SafeAreaView>
   );
 };
 
@@ -43,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  gradient: {
+  blurContainer: {
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -51,29 +140,40 @@ const styles = StyleSheet.create({
   },
   callerInfo: {
     alignItems: 'center',
-    marginTop: hp('10%'),
+    marginTop: hp('5%'),
+    width: '100%',
+  },
+  callerContainer: {
+    alignItems: 'center',
+    marginBottom: hp('3%'),
+    width: '100%',
   },
   callerImage: {
-    width: wp('40%'),
-    height: wp('40%'),
-    borderRadius: wp('20%'),
+    width: wp('30%'),
+    height: wp('30%'),
+    borderRadius: wp('15%'),
     marginBottom: hp('2%'),
   },
   callerImagePlaceholder: {
-    width: wp('40%'),
-    height: wp('40%'),
-    borderRadius: wp('20%'),
+    width: wp('30%'),
+    height: wp('30%'),
+    borderRadius: wp('15%'),
     backgroundColor: 'rgba(255,255,255,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   callerImagePlaceholderText: {
-    fontSize: wp('15%'),
+    fontSize: wp('12%'),
     color: '#ffffff',
   },
   callerName: {
     fontSize: wp('6%'),
-    fontWeight: 'bold',
+    fontWeight: 'normal',
+    color: '#ffffff',
+    marginBottom: hp('1%'),
+  },
+  timer: {
+    fontSize: wp('4%'),
     color: '#ffffff',
     marginBottom: hp('1%'),
   },
@@ -82,26 +182,36 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     opacity: 0.8,
   },
-  ongoingButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  controlsContainer: {
     width: '100%',
+    alignItems: 'center',
     marginBottom: hp('5%'),
   },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: hp('3%'),
+    width: '100%',
+  },
   circleButton: {
-    width: wp('15%'),
-    height: wp('15%'),
-    borderRadius: wp('7.5%'),
+    width: wp('20%'),
+    height: wp('20%'),
+    borderRadius: wp('10%'),
     backgroundColor: 'rgba(255,255,255,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: wp('2%'),
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: wp('3%'),
+    marginTop: hp('0.5%'),
   },
   endCallButton: {
-    backgroundColor: '#ff3b30',
-  },
-  buttonIcon: {
-    fontSize: wp('8%'),
-    color: '#ffffff',
+    backgroundColor: '#FF3B30',
+    width: wp('17%'),
+    height: wp('17%'),
+    borderRadius: wp('8.5%'),
   },
 });
 
