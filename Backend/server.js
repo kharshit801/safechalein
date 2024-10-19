@@ -3,10 +3,9 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userroute from "../Backend/route/user.route.js";
 import cors from "cors";
-import twilio from "twilio";  // Import Twilio
+import twilio from "twilio";
 
 dotenv.config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -22,30 +21,50 @@ try {
 }
 
 // Twilio configuration
-const accountSid = 'AC5dd9309b12e293439fe18caf110cc8be';
-const authToken = 'bb82f93cc824b4c09c107cac0d97ed54';   // Twilio secret from the image
+const accountSid = "AC6dc9e10d7e76bdc2cd2e5aa3c572d5c9";
+const authToken = "bb82f93cc824b4c09c107cac0d97ed54";
+const twilioPhoneNumber = "+15097403251";
+
 const twilioClient = twilio(accountSid, authToken);
 
 // Route to trigger SOS via voice call
 app.post('/callSOS', async (req, res) => {
     const { latitude, longitude } = req.body;
-    const phoneNumber = '9621214402'; // Testing number
-
-    if (!latitude || !longitude) {
-        return res.status(400).send('Missing location data');
-    }
-
+    const phoneNumber = '+919621214402'; // Indian number with country code
+    
     try {
-        const response = await twilioClient.calls.create({
-            twiml: `<Response><Say>This is an emergency! My location is Latitude: ${latitude}, Longitude: ${longitude}. Please send help.</Say></Response>`,
+        // Create TwiML using string template
+        const twimlString = `<?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+            <Say voice="alice" language="en-IN">
+                This is an emergency alert from Team Auxin. A user needs immediate assistance.
+            </Say>
+            <Pause length="1"/>
+            <Say voice="alice" language="en-IN">
+                The user's location coordinates are: Latitude ${latitude}, Longitude ${longitude}. Please send help immediately.
+            </Say>
+        </Response>`;
+
+        // Create call with inline TwiML
+        const call = await twilioClient.calls.create({
+            twiml: twimlString,
             to: phoneNumber,
-            from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
+            from: twilioPhoneNumber,
         });
-        console.log(`SOS call initiated with SID: ${response.sid}`);
-        res.status(200).send('SOS call initiated successfully');
+        
+        console.log(`SOS call initiated with SID: ${call.sid}`);
+        res.status(200).json({ 
+            message: 'SOS call initiated successfully', 
+            callSid: call.sid,
+            location: { latitude, longitude }
+        });
+        
     } catch (err) {
         console.error('Error initiating SOS call:', err);
-        res.status(500).send('Failed to initiate SOS call');
+        res.status(500).json({ 
+            error: 'Failed to initiate SOS call', 
+            details: err.message 
+        });
     }
 });
 

@@ -17,7 +17,6 @@ const Recording: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingsCount, setRecordingsCount] = useState(0);
   const navigation = useNavigation<RecordingScreenNavigationProp>();
-
   useEffect(() => {
     loadRecordingsCount();
   }, []);
