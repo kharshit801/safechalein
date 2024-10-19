@@ -42,6 +42,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Recording"
         options={{
+          headerShown: false,
           title: "Recordings",
           tabBarIcon: ({ color }) => <Ionicons name="recording-outline" color={color} size={24} />,
         }}
@@ -49,6 +50,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Helpline"
         options={{
+        
           title: "Helpline",
           tabBarIcon: ({ color }) => <Ionicons name="book-sharp" color={color} size={24} />,
         }}
@@ -57,6 +59,7 @@ export default function TabLayout() {
         name="History"
         options={{
           title: "History",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="time-outline" color={color} size={24} />
           ),
