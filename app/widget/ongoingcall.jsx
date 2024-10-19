@@ -20,7 +20,7 @@ const OngoingCallScreen = ({
   const [isSpeakerOn, setIsSpeakerOn] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container}>
+      <View style = {styles.container}>
       <StatusBar barStyle="light-content" />
       <BlurView intensity={100} tint="dark" style={styles.blurContainer}>
         <View style={styles.callerInfo}>
@@ -123,11 +123,16 @@ const OngoingCallScreen = ({
           </TouchableOpacity>
         </View>
       </BlurView>
-    </SafeAreaView>
+      </View>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea:{
+    flex: 1,
+    backgroundColor: '#000000',
+
+  },flex: 1,
   container: {
     flex: 1,
     backgroundColor: '#000000',
