@@ -23,25 +23,10 @@ const LoginPage = () => {
       setSuccessMessage('Logged in successfully!');
       setErrorMessage('');
       router.replace("(tabs)");
-      makeAuthenticatedRequest();
+      
     } catch (error) {
       setErrorMessage(error.response?.data.message || 'An error occurred during login.');
       setSuccessMessage('');
-    }
-  };
-  const makeAuthenticatedRequest = async () => {
-    try {
-      const token = await AsyncStorage.getItem('jwtToken'); 
-
-      const response = await axios.get('http://172.29.49.198:8080/protected-route', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      console.log('Protected data:', response.data); 
-    } catch (error) {
-      console.error('Error fetching protected data:', error);
     }
   };
 
