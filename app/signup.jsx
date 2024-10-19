@@ -8,7 +8,6 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState(''); 
   const [successMessage, setSuccessMessage] = useState(''); 
 
@@ -29,8 +28,6 @@ const SignupPage = () => {
       setSuccessMessage('');
     }
   };
-=======
->>>>>>> bc2db94d58e9b288c1c3962a2088508009349da9
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Vibration, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Vibration,
+  ScrollView,
+  Modal,
+  FlatList,
+} from 'react-native';
 import { Audio } from 'expo-av';
-import { Camera } from 'lucide-react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Ionicons } from '@expo/vector-icons';
 
 const FakeCallScreen = () => {
+  const [calls, setCalls] = useState([]);
+  const [activeCalls, setActiveCalls] = useState([]);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [callDelay, setCallDelay] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showIncomingCall, setShowIncomingCall] = useState(false);
+  const [showOngoingCall, setShowOngoingCall] = useState(false);
   const [sound, setSound] = useState();
+  const [isConferenceActive, setIsConferenceActive] = useState(false);
 
   const delayOptions = [
     { label: '5 sec', value: 5 },
@@ -21,15 +35,6 @@ const FakeCallScreen = () => {
   ];
 
   useEffect(() => {
-    const checkAudioAPI = async () => {
-      if (Audio.Sound) {
-        console.log('Audio API is available');
-      } else {
-        console.error('Audio API is not available');
-      }
-    };
-    checkAudioAPI();
-
     return () => {
       if (sound) {
         sound.unloadAsync();
@@ -47,7 +52,7 @@ const FakeCallScreen = () => {
         }
       );
       setSound(ringSound);
-      await ringSound.playAsync(); // Explicitly start playing the sound
+      await ringSound.playAsync();
     } catch (error) {
       console.error('Error playing ringtone:', error);
       alert('Failed to play ringtone. Please check your device settings.');
@@ -59,6 +64,9 @@ const FakeCallScreen = () => {
       alert('Please fill in all details and select a timer');
       return;
     }
+
+    const newCall = { id: Date.now(), name, number, image: selectedImage };
+    setCalls([...calls, newCall]);
 
     try {
       await Audio.setAudioModeAsync({
@@ -73,13 +81,10 @@ const FakeCallScreen = () => {
       alert('Failed to set audio mode. The call may not work as expected.');
     }
 
-    // Schedule the fake call
     setTimeout(async () => {
       try {
         await playRingtone();
-        // Start vibration
         Vibration.vibrate([1000, 2000, 1000], true);
-        // Show incoming call screen
         setShowIncomingCall(true);
       } catch (error) {
         console.error('Error starting fake call:', error);
@@ -88,7 +93,7 @@ const FakeCallScreen = () => {
     }, callDelay * 1000);
   };
 
-  const handleEndCall = async () => {
+  const handleAcceptCall = async (call) => {
     try {
       if (sound) {
         await sound.stopAsync();
@@ -97,17 +102,148 @@ const FakeCallScreen = () => {
       }
       Vibration.cancel();
       setShowIncomingCall(false);
+      setActiveCalls([...activeCalls, { ...call, isOnHold: false }]);
+      setShowOngoingCall(true);
     } catch (error) {
-      console.error('Error ending call:', error);
-      alert('Failed to end the call properly. Please restart the app if issues persist.');
+      console.error('Error accepting call:', error);
+      alert('Failed to accept the call properly. Please try again.');
     }
   };
+
+  const handleDeclineCall = async (callId) => {
+    try {
+      if (sound) {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setSound(null);
+      }
+      Vibration.cancel();
+      setShowIncomingCall(false);
+      setCalls(calls.filter(call => call.id !== callId));
+    } catch (error) {
+      console.error('Error declining call:', error);
+      alert('Failed to decline the call properly. Please try again.');
+    }
+  };
+
+  const handleEndOngoingCall = (callId) => {
+    setActiveCalls(activeCalls.filter(call => call.id !== callId));
+    if (activeCalls.length === 1) {
+      setShowOngoingCall(false);
+      setIsConferenceActive(false);
+    }
+  };
+
+  const handleHoldCall = (callId) => {
+    setActiveCalls(activeCalls.map(call => 
+      call.id === callId ? { ...call, isOnHold: !call.isOnHold } : call
+    ));
+  };
+
+  const startConference = () => {
+    if (activeCalls.length > 1) {
+      setIsConferenceActive(true);
+    } else {
+      alert('You need at least two active calls to start a conference.');
+    }
+  };
+
+  const endConference = () => {
+    setIsConferenceActive(false);
+  };
+
+  const renderIncomingCallScreen = () => (
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={showIncomingCall}
+      onRequestClose={() => setShowIncomingCall(false)}
+    >
+      <View style={styles.incomingCallContainer}>
+        <Text style={styles.incomingCallName}>{calls[calls.length - 1]?.name}</Text>
+        <Text style={styles.incomingCallNumber}>{calls[calls.length - 1]?.number}</Text>
+        <View style={styles.incomingCallActions}>
+          <TouchableOpacity
+            style={[styles.incomingCallButton, styles.declineButton]}
+            onPress={() => handleDeclineCall(calls[calls.length - 1]?.id)}
+          >
+            <Ionicons name="close-circle" size={50} color="white" />
+            <Text style={styles.incomingCallButtonText}>Decline</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.incomingCallButton, styles.acceptButton]}
+            onPress={() => handleAcceptCall(calls[calls.length - 1])}
+          >
+            <Ionicons name="checkmark-circle" size={50} color="white" />
+            <Text style={styles.incomingCallButtonText}>Accept</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+
+  const renderOngoingCallScreen = () => (
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={showOngoingCall}
+      onRequestClose={() => setShowOngoingCall(false)}
+    >
+      <View style={styles.ongoingCallContainer}>
+        <Text style={styles.ongoingCallTitle}>
+          {isConferenceActive ? 'Conference Call' : 'Ongoing Calls'}
+        </Text>
+        <FlatList
+          data={activeCalls}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.ongoingCallItem}>
+              <View>
+                <Text style={styles.ongoingCallName}>{item.name}</Text>
+                <Text style={styles.ongoingCallNumber}>{item.number}</Text>
+                <Text style={styles.ongoingCallStatus}>
+                  {item.isOnHold ? 'On Hold' : 'Active'}
+                </Text>
+              </View>
+              <View style={styles.ongoingCallActions}>
+                <TouchableOpacity
+                  style={styles.ongoingCallButton}
+                  onPress={() => handleHoldCall(item.id)}
+                >
+                  <Ionicons
+                    name={item.isOnHold ? "play-circle" : "pause-circle"}
+                    size={30}
+                    color="#4CAF50"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.ongoingCallButton}
+                  onPress={() => handleEndOngoingCall(item.id)}
+                >
+                  <Ionicons name="call" size={30} color="red" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        />
+        {activeCalls.length > 1 && (
+          <TouchableOpacity
+            style={styles.conferenceButton}
+            onPress={isConferenceActive ? endConference : startConference}
+          >
+            <Text style={styles.conferenceButtonText}>
+              {isConferenceActive ? 'End Conference' : 'Start Conference'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </Modal>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-         
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Caller Details</Text>
             <Text style={styles.headerSubtitle}>
@@ -122,21 +258,21 @@ const FakeCallScreen = () => {
             <View style={styles.imageOptions}>
               <TouchableOpacity style={styles.imageOption}>
                 <View style={styles.iconContainer}>
-                  <Text style={styles.iconText}>📷</Text>
+                  <Ionicons name="camera" size={30} color="#666" />
                 </View>
                 <Text style={styles.optionLabel}>Camera</Text>
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.imageOption}>
                 <View style={styles.iconContainer}>
-                  <Text style={styles.iconText}>🖼️</Text>
+                  <Ionicons name="images" size={30} color="#666" />
                 </View>
                 <Text style={styles.optionLabel}>Gallery</Text>
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.imageOption}>
                 <View style={styles.iconContainer}>
-                  <Text style={styles.iconText}>👤</Text>
+                  <Ionicons name="person" size={30} color="#666" />
                 </View>
                 <Text style={styles.optionLabel}>Preset</Text>
               </TouchableOpacity>
@@ -155,7 +291,7 @@ const FakeCallScreen = () => {
                   placeholderTextColor="#999"
                 />
                 <TouchableOpacity style={styles.contactIcon}>
-                  <Text style={styles.iconText}>👤</Text>
+                  <Ionicons name="person-add" size={24} color="#666" />
                 </TouchableOpacity>
               </View>
               
@@ -169,7 +305,7 @@ const FakeCallScreen = () => {
                   placeholderTextColor="#999"
                 />
                 <TouchableOpacity style={styles.contactIcon}>
-                  <Text style={styles.iconText}>👤</Text>
+                  <Ionicons name="call" size={24} color="#666" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -200,48 +336,16 @@ const FakeCallScreen = () => {
         </View>
 
         <View style={styles.footer}>
-        <TouchableOpacity 
-          style={styles.callMeButton}
-          onPress={startFakeCall}
-        >
-          <Text style={styles.callMeButtonText}>Call Me</Text>
-        </TouchableOpacity>
-      </View>
-
-        {/* Incoming Call Modal */}
-        <Modal
-        visible={showIncomingCall}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.callCard}>
-            <View style={styles.callerInfo}>
-              <View style={styles.callerImage}>
-                <Text style={styles.callerImageText}>👤</Text>
-              </View>
-              <Text style={styles.callerName}>{name}</Text>
-              <Text style={styles.callerNumber}>{number}</Text>
-            </View>
-            
-            <View style={styles.callActions}>
-              <TouchableOpacity 
-                style={styles.declineButton}
-                onPress={handleEndCall}
-              >
-                <Text style={styles.declineButtonText}>Decline</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.acceptButton}
-                onPress={handleEndCall}
-              >
-                <Text style={styles.acceptButtonText}>Accept</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TouchableOpacity 
+            style={styles.callMeButton}
+            onPress={startFakeCall}
+          >
+            <Text style={styles.callMeButtonText}>Schedule Fake Call</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
       </ScrollView>
+      {renderIncomingCallScreen()}
+      {renderOngoingCallScreen()}
     </SafeAreaView>
   );
 };

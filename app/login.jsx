@@ -7,7 +7,6 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [keepSignedIn, setKeepSignedIn] = useState(false);
-<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -25,8 +24,6 @@ const LoginPage = () => {
       setSuccessMessage('');
     }
   };
-=======
->>>>>>> bc2db94d58e9b288c1c3962a2088508009349da9
 
   return (
     <SafeAreaView style={styles.container}>
