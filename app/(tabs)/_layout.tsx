@@ -1,9 +1,18 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import React from "react";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Link, Tabs } from "expo-router";
+import { Pressable } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import Feather from "@expo/vector-icons/Feather";
+import { Colors } from "./../../constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof FontAwesome>["name"];
+  color: string;
+}) {
+  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -11,25 +20,40 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+          title: "Track Me",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="location-outline" color={color} size={24} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="FakeCall"
+        options={{
+          title: "Fake Call",
+          tabBarIcon: ({ color }) => (
+            <Feather name="phone-call" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="Record"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+          title: "Recordings",
+          tabBarIcon: ({ color }) => <Ionicons name="recording-outline" color={color} size={24} />,
+        }}
+      />
+      <Tabs.Screen
+        name="helpline"
+        options={{
+          title: "Helpline",
+          tabBarIcon: ({ color }) => <Ionicons name="book-sharp" color={color} size={24} />,
         }}
       />
     </Tabs>
