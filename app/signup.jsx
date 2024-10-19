@@ -14,7 +14,7 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:3000/user/signup', {
+      const response = await axios.post('http://172.29.49.198:8080/user/signup', {
         fullname: fullname,
         email:email,
         password:password,

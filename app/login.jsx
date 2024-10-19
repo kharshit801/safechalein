@@ -13,12 +13,12 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:3000/user/login', {
-        email: email,
-        password: password,
-      });
-      setSuccessMessage('Logged in successfully!');
-      setErrorMessage('');
+      // const response = await axios.post('http://172.29.49.198:8080/user/login', {
+      //   email: email,
+      //   password: password,
+      // });
+      // setSuccessMessage('Logged in successfully!');
+      // setErrorMessage('');
       router.replace("(tabs)");
     } catch (error) {
       setErrorMessage(error.response?.data.message || 'An error occurred during login.');
