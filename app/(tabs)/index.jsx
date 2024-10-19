@@ -4,7 +4,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import AppMapview from './../Mapview';
 import { Ionicons } from '@expo/vector-icons';
 
-
 const HomeScreen = () => {
   const handleSOSPress = () => {
     Alert.alert('SOS', 'Are you sure you want to send an SOS?', [
@@ -57,12 +56,9 @@ const styles = StyleSheet.create({
     height: hp('8%'),
     width: '100%',
     backgroundColor: '#fff',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
-    paddingHorizontal: wp('3%'),
-    paddingTop: hp('2%'),  
-   
   
   },
   headerText: {
