@@ -2,31 +2,48 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity,Image, StyleSheet, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [keepSignedIn, setKeepSignedIn] = useState(false);
-<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleLogin = async () => {
     try {
-      // const response = await axios.post('http://172.29.49.198:8080/user/login', {
-      //   email: email,
-      //   password: password,
-      // });
-      // setSuccessMessage('Logged in successfully!');
-      // setErrorMessage('');
+      const response = await axios.post('http://172.29.49.198:8080/user/login', {
+        email: email,
+        password: password,
+      });
+      const { token } = response.data;
+      await AsyncStorage.setItem('jwtToken', token);
+      setSuccessMessage('Logged in successfully!');
+      setErrorMessage('');
       router.replace("(tabs)");
+      makeAuthenticatedRequest();
     } catch (error) {
       setErrorMessage(error.response?.data.message || 'An error occurred during login.');
       setSuccessMessage('');
     }
   };
-=======
->>>>>>> bc2db94d58e9b288c1c3962a2088508009349da9
+  const makeAuthenticatedRequest = async () => {
+    try {
+      const token = await AsyncStorage.getItem('jwtToken'); 
+
+      const response = await axios.get('http://172.29.49.198:8080/protected-route', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      console.log('Protected data:', response.data); 
+    } catch (error) {
+      console.error('Error fetching protected data:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>

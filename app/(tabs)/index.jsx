@@ -5,15 +5,24 @@ import AppMapview from './../Mapview';
 import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = () => {
+  const generateRandomCode = () => {
+    return Math.floor(1000 + Math.random() * 9000); 
+  };
+
   const handleSOSPress = () => {
-    Alert.alert('SOS', 'Are you sure you want to send an SOS?', [
+    const randomCode = generateRandomCode();
+
+    Alert.alert('SOS', `Are you sure you want to send an SOS? Your code is ${randomCode}`, [
       {
         text: 'Cancel',
         style: 'cancel',
       },
       {
         text: 'Yes',
-        onPress: () => console.log('SOS button pressed'),
+        onPress: () => {
+          
+          console.log(`SOS sent with code: ${randomCode}`);
+        },
       },
     ]);
   };
@@ -24,7 +33,7 @@ const HomeScreen = () => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Ionicons name="menu" size={wp('6%')} color="#6b63f6"  />
+            <Ionicons name="menu" size={wp('6%')} color="#6b63f6" />
             <Image source={require("../../assets/images/logo-3.png")} style={styles.logo} />
             <Ionicons name="notifications" size={wp('6%')} color="#6b63f6" style={styles.notificationIcon} />
           </View>
@@ -60,7 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
-  
   },
   headerText: {
     color: '#fff',
@@ -101,24 +109,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: wp('5%'),
     fontWeight: 'bold',
-  },
-  sosButton2: {
-    position: 'absolute',
-    right: wp('5%'),
-    bottom: hp('3%'),
-    backgroundColor: '#DB2B39',
-    borderRadius: wp('10%'),
-    width: wp('20%'),
-    height: wp('20%'),
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
 });
