@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  Switch,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -21,52 +22,50 @@ import { useRouter } from "expo-router";
 const HomeScreen = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-  const [countdown, setCountdown] = useState(5); // Set the initial countdown to 5 seconds
+  const [countdown, setCountdown] = useState(5);
   const [isSOSCancelled, setIsSOSCancelled] = useState(false);
+  const [wellLitAreas, setWellLitAreas] = useState(false);
+  const [monitoredAreas, setMonitoredAreas] = useState(false);
 
-  // Effect to handle countdown
   useEffect(() => {
     let timer;
     if (modalVisible && countdown > 0 && !isSOSCancelled) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     } else if (countdown === 0 && !isSOSCancelled) {
       sendSOSCall();
-      setModalVisible(false); // Close modal after sending SOS
+      setModalVisible(false);
     }
-    return () => clearTimeout(timer); // Cleanup timer on unmount
+    return () => clearTimeout(timer);
   }, [modalVisible, countdown, isSOSCancelled]);
 
-  // Send SOS call function - triggers the API call to send an SOS alert
   const sendSOSCall = async () => {
     try {
-      const response = await fetch('http://172.29.49.198:3000/callSOS', {
-        method: 'POST',
+      const response = await fetch("http://172.29.49.198:3000/callSOS", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({}) // No location data sent
+        body: JSON.stringify({}),
       });
 
       const text = await response.text();
-      console.log('SOS call response:', text);
-      Alert.alert('Success', 'SOS call initiated successfully');
+      console.log("SOS call response:", text);
+      Alert.alert("Success", "SOS call initiated successfully");
     } catch (error) {
-      console.log('Error sending SOS call:', error);
-      Alert.alert('Error', 'Failed to send SOS call');
+      console.log("Error sending SOS call:", error);
+      Alert.alert("Error", "Failed to send SOS call");
     }
   };
 
-  // Function to handle SOS button press
   const handleSOSPress = () => {
-    setIsSOSCancelled(false);  // Reset cancellation flag
-    setCountdown(5);           // Reset the countdown
-    setModalVisible(true);     // Show modal
+    setIsSOSCancelled(false);
+    setCountdown(5);
+    setModalVisible(true);
   };
 
-  // Function to cancel SOS call
   const cancelSOSCall = () => {
-    setIsSOSCancelled(true);   // Set cancellation flag
-    setModalVisible(false);    // Hide modal
+    setIsSOSCancelled(true);
+    setModalVisible(false);
     Alert.alert("Cancelled", "SOS call has been cancelled");
   };
 
@@ -75,7 +74,6 @@ const HomeScreen = () => {
       <StatusBar backgroundColor="#ccc" barStyle="dark-content" />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          {/* Header with menu and notification icons */}
           <View style={styles.header}>
             <Ionicons name="menu" size={wp("6%")} color="#6b63f6" />
             <Image
@@ -91,14 +89,12 @@ const HomeScreen = () => {
             />
           </View>
 
-          {/* Section to add friends for SOS and tracking */}
           <View style={styles.header2}>
             <Text style={styles.Text1}>Add Friends</Text>
             <View style={styles.friendContainer}>
               <Text style={styles.friendInfo}>
                 Add a friend to use SOS and Track them.
               </Text>
-              {/* Navigate to Add Friend screen */}
               <TouchableOpacity onPress={() => router.replace("Addfriend")}>
                 <View style={styles.button}>
                   <Text style={styles.buttonText}>Add Friends</Text>
@@ -107,17 +103,33 @@ const HomeScreen = () => {
             </View>
           </View>
 
-          
           <View style={styles.content}>
-            <AppMapview />
+            <AppMapview
+              wellLitAreas={wellLitAreas}
+              monitoredAreas={monitoredAreas}
+            />
           </View>
 
-          {/* SOS Button - initiates the SOS call */}
-          <TouchableOpacity style={styles.sosButton} onPress={handleSOSPress}>
-            <Text style={styles.sosButtonText}>SOS</Text>
-          </TouchableOpacity>
+          <View style={styles.preferenceAndSOSContainer}>
+            <View style={styles.preferenceContainer}>
+              <View style={styles.toggleContainer}>
+                <Text style={styles.toggleLabel}>Well-Lit Areas:</Text>
+                <Switch value={wellLitAreas} onValueChange={setWellLitAreas} />
+              </View>
+              <View style={styles.toggleContainer}>
+                <Text style={styles.toggleLabel}>Monitored Areas:</Text>
+                <Switch
+                  value={monitoredAreas}
+                  onValueChange={setMonitoredAreas}
+                />
+              </View>
+            </View>
 
-          {/* Modal for countdown before sending SOS */}
+            <TouchableOpacity style={styles.sosButton} onPress={handleSOSPress}>
+              <Text style={styles.sosButtonText}>SOS</Text>
+            </TouchableOpacity>
+          </View>
+
           <Modal
             animationType="slide"
             transparent={true}
@@ -143,8 +155,6 @@ const HomeScreen = () => {
     </>
   );
 };
-
-export default HomeScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -208,10 +218,32 @@ const styles = StyleSheet.create({
     height: wp("25%"),
     resizeMode: "contain",
   },
+  preferenceAndSOSContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: wp("4%"),
+   
+  },
+  preferenceContainer: {
+    flex: 1,
+    marginRight: wp("4%"),
+    backgroundColor: "#ffffff", // Pure white background
+    padding: wp("2%"),
+    borderRadius: wp("2%"),
+    elevation: 2, // Add a slight shadow for depth
+  },
+  toggleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: hp("1%"),
+  },
+  toggleLabel: {
+    fontSize: wp("3.5%"),
+    color: "#333", // Darker text for better contrast
+  },
   sosButton: {
-    position: "absolute",
-    right: wp("5%"),
-    bottom: hp("3%"),
     backgroundColor: "#DB2B39",
     borderRadius: wp("10%"),
     width: wp("20%"),
@@ -259,11 +291,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#DB2B39",
     paddingVertical: hp("1%"),
     paddingHorizontal: wp("4%"),
-    borderRadius: 5,
+    borderRadius: wp("2%"),
+    alignItems: "center",
+    justifyContent: "center",
   },
   cancelButtonText: {
-    color: "#fff",
-    fontSize: wp("4%"),
+    color: "white",
     fontWeight: "bold",
   },
+  Text1: {
+    fontSize: wp("4%"),
+    fontWeight: "bold",
+    marginBottom: hp("1%"),
+  },
 });
+
+export default HomeScreen;

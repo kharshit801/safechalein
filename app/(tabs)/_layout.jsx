@@ -1,31 +1,78 @@
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Tabs } from "expo-router";
+import { Animated } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
-import { Colors } from "../../constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function TabBarIcon() {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+const TabBarIcon = ({ name, color, size, focused }) => {
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.spring(animatedValue, {
+      toValue: focused ? 1 : 0,
+      useNativeDriver: true,
+    }).start();
+  }, [focused]);
+
+  return (
+    <Animated.View
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: [
+          {
+            scale: animatedValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 1.2],
+            }),
+          },
+        ],
+      }}
+    >
+      {name.startsWith("phone") ? (
+        <Feather name={name} size={size} color={color} />
+      ) : (
+        <Ionicons name={name} size={size} color={color} />
+      )}
+    </Animated.View>
+  );
+};
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#6b63f6",
+        tabBarInactiveTintColor: "#8e8e93",
+        tabBarStyle: {
+          backgroundColor: 'white',
+          borderTopWidth: 0,
+          elevation: 8,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom,
+        },
+        tabBarItemStyle: {
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Track Me",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="location-outline" color={color} size={24} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="location-outline" color={color} size={24} focused={focused} />
           ),
           headerShown: false,
         }}
@@ -34,9 +81,10 @@ export default function TabLayout() {
         name="FakeCall"
         options={{
           title: "Fake Call",
-          tabBarIcon: ({ color }) => (
-            <Feather name="phone-call" size={24} color={color} />
-          ),headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="phone-call" color={color} size={24} focused={focused} />
+          ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -44,15 +92,18 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           title: "Recordings",
-          tabBarIcon: ({ color }) => <Ionicons name="recording-outline" color={color} size={24} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="recording-outline" color={color} size={24} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="Helpline"
         options={{
-        
           title: "Helpline",
-          tabBarIcon: ({ color }) => <Ionicons name="book-sharp" color={color} size={24} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="book-sharp" color={color} size={24} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -60,12 +111,11 @@ export default function TabLayout() {
         options={{
           title: "History",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="time-outline" color={color} size={24} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="time-outline" color={color} size={24} focused={focused} />
           ),
         }}
-        ></Tabs.Screen>
-
+      />
     </Tabs>
   );
 }
