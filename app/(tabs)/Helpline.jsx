@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const helplineData = [
   { id: '1', number: '112', title: 'National helpline', icon: 'call' },
@@ -17,13 +18,13 @@ const helplineData = [
 const HelplineItem = ({ item, onPress }) => (
   <TouchableOpacity style={styles.item} onPress={onPress}>
     <View style={styles.iconContainer}>
-      <Ionicons name={item.icon} size={24} color="#fff" />
+      <Ionicons name={item.icon} size={wp('6%')} color="#fff" />
     </View>
     <View style={styles.textContainer}>
       <Text style={styles.number}>{item.number}</Text>
       <Text style={styles.title}>{item.title}</Text>
     </View>
-    <Ionicons name="call-outline" size={24} color="#000" />
+    <Ionicons name="call-outline" size={wp('5%')} color="#A0A0A0" />
   </TouchableOpacity>
 );
 
@@ -33,9 +34,8 @@ const NationalHelpline = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>National Numbers</Text>
-      <Text style={styles.subHeader}>In case of an emergency, call an appropriate number for help.</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.header}>Emergency Contacts</Text>
       <FlatList
         data={helplineData}
         renderItem={({ item }) => (
@@ -45,54 +45,61 @@ const NationalHelpline = () => {
           />
         )}
         keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContainer}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: '#F8F9FA',
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: wp('7%'),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginVertical: hp('3%'),
+    marginHorizontal: wp('5%'),
   },
-  subHeader: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 16,
+  listContainer: {
+    paddingHorizontal: wp('5%'),
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp('3%'),
+    padding: wp('4%'),
+    marginBottom: hp('2%'),
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#4caf50',
+    width: wp('12%'),
+    height: wp('12%'),
+    borderRadius: wp('6%'),
+    backgroundColor: '#6B63F6',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: wp('4%'),
   },
   textContainer: {
     flex: 1,
   },
   number: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: wp('4.5%'),
+    fontWeight: '600',
+    color: '#1A1A1A',
+    marginBottom: hp('0.5%'),
   },
   title: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: wp('3.5%'),
+    color: '#6C757D',
   },
 });
 

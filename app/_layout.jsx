@@ -7,7 +7,6 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { UserLocationProvider } from '../context/UserLocationcontext';
-import AppMapview from '../app/Mapview';
 
 SplashScreen.preventAutoHideAsync();
 

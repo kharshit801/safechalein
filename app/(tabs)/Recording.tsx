@@ -65,14 +65,7 @@ const Recording: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Image 
-          source={require('../../assets/images/logo-3.png')} 
-          style={styles.logo}
-          resizeMode="contain"
-        />
-      </View>
-      
+     
       <View style={styles.content}>
         <Text style={styles.contentTitle}>Anonymous Recording</Text>
         <Text style={styles.contentSubtitle}>
@@ -81,20 +74,20 @@ const Recording: React.FC = () => {
         
         <TouchableOpacity style={styles.historyButton} onPress={navigateToHistory}>
           <View style={styles.historyButtonContent}>
-            <Ionicons name="mic" size={24} color="black" />
+            <Ionicons name="mic" size={wp('6%')} color="black" />
             <View style={styles.historyTextContainer}>
               <Text style={styles.historyText}>Recordings</Text>
               <Text style={styles.historySubtext}>{recordingsCount} saved</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={24} color="black" />
+          <Ionicons name="chevron-forward" size={wp('6%')} color="black" />
         </TouchableOpacity>
         
         <TouchableOpacity 
           style={[styles.recordingButton, isRecording && styles.stopRecordingButton]}
           onPress={toggleRecording}
         >
-          <Ionicons name={isRecording ? "stop" : "mic"} size={24} color="white" />
+          <Ionicons name={isRecording ? "stop" : "mic"} size={wp('6%')} color="white" />
           <Text style={styles.recordingButtonText}>
             {isRecording ? 'Stop Recording' : 'Start Recording'}
           </Text>
@@ -111,9 +104,9 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'center', // Centered the logo
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    padding: wp('4%'),
   },
   logo: {
     width: wp('50%'),
@@ -121,49 +114,54 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
   },
   contentTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: wp('7%'),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginVertical: hp('3%'),
+    marginHorizontal: wp('5%'),
   },
   contentSubtitle: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     color: '#666',
-    marginBottom: 24,
+    marginBottom: hp('3%'),
+    marginHorizontal: wp('5%'),
   },
   historyButton: {
+    marginHorizontal: wp('5%'),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#f0f0f0',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 24,
+    padding: wp('4%'),
+    borderRadius: wp('2%'),
+    marginBottom: hp('3%'),
   },
   historyButtonContent: {
+
     flexDirection: 'row',
     alignItems: 'center',
   },
   historyTextContainer: {
-    marginLeft: 16,
+    marginLeft: wp('4%'),
   },
   historyText: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
   },
   historySubtext: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     color: '#666',
   },
   recordingButton: {
+    marginHorizontal: wp('5%'),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#5296A5',
-    padding: 16,
-    borderRadius: 24,
+    backgroundColor: '#6B63F6',
+    padding: wp('4%'),
+    borderRadius: wp('6%'),
     marginTop: 'auto',
   },
   stopRecordingButton: {
@@ -171,9 +169,9 @@ const styles = StyleSheet.create({
   },
   recordingButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
-    marginLeft: 8,
+    marginLeft: wp('2%'),
   },
 });
 

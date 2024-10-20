@@ -338,13 +338,10 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingTop: hp('2%'),
   },
   header: {
-    paddingHorizontal: wp('6%'),
-    paddingBottom: hp('2%'),
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+   
+    color: '#1A1A1A',
   },
   backButton: {
     marginBottom: hp('1%'),
@@ -353,15 +350,16 @@ const styles = StyleSheet.create({
     fontSize: wp('6%'),
     color: '#333',
   },
-  headerTextContainer: {
-    gap: hp('0.5%'),
-  },
+ 
   headerTitle: {
-    fontSize: wp('6%'),
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: wp('7%'),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginVertical: hp('3%'),
+    marginHorizontal: wp('5%'),
   },
   headerSubtitle: {
+    marginHorizontal: wp('5%'),
     fontSize: wp('3.5%'),
     color: '#666',
   },
@@ -379,6 +377,10 @@ const styles = StyleSheet.create({
     marginBottom: hp('2%'),
   },
   imageOptions: {
+    // borderColor: 'red',
+    // borderWidth: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
     flexDirection: 'row',
     gap: wp('8%'),
   },
@@ -461,7 +463,7 @@ const styles = StyleSheet.create({
     fontSize: wp('4%'),
     fontWeight: '600',
   },callMeButton: {
-    backgroundColor: '#4CAF50', // Changed to green for "Call Me"
+    backgroundColor: '#6B63F6',
     paddingVertical: hp('2%'),
     borderRadius: wp('6%'),
     alignItems: 'center',

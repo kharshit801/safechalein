@@ -9,11 +9,11 @@ import {
 
 const SettingsScreen = () => {
   const [isConnected, setIsConnected] = React.useState(false);
-  const router = useRouter(); // Use the router hook
+  const router = useRouter(); 
 
   const SettingItem = ({ icon, title }) => (
     <TouchableOpacity style={styles.settingItem}>
-      <Ionicons name={icon} size={24} color="#8e44ad" />
+      <Ionicons name={icon} size={wp('6%')} color="#6B63F6" />
       <Text style={styles.settingText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -24,23 +24,31 @@ const SettingsScreen = () => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.replace("index")}>
-              <Ionicons name="arrow-back" size={24} color="#6b63f6" />
+            <TouchableOpacity onPress={() => router.replace("/(tabs)")}>
+              <Ionicons name="arrow-back" size={wp('6%')} color="#6b63f6" />
             </TouchableOpacity>
             <Image
-              source={require("./../assets/images/logo-3.png")} // Adjust the path accordingly
+              source={require("./../assets/images/logo-3.png")}
               style={styles.logo}
             />
           </View>
 
           <View style={styles.profile}>
-            <View style={styles.avatar} />
-            <View>
-              <Text style={styles.name}>User</Text>
-              <Text style={styles.phone}>+91 9621......</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.avatar} >
+
+            <Ionicons name="person" size={wp("6%")} color="#6b63f6" />
+            
+
             </View>
-            <TouchableOpacity style={{paddingLeft:wp("5%")}}>
-              <Ionicons name="pencil" size={24} color="#8e44ad" />
+            <View>
+              <Text style={styles.name}>Team Auxin</Text>
+              <Text style={styles.phone}>+91 9621456342</Text>
+            </View>
+            </View>
+         
+            <TouchableOpacity style={{paddingLeft: wp('5%')}}>
+              <Ionicons name="pencil" size={wp('6%')} color="#6B63F6" />
             </TouchableOpacity>
           </View>
 
@@ -51,7 +59,7 @@ const SettingsScreen = () => {
               <Switch
                 value={isConnected}
                 onValueChange={setIsConnected}
-                trackColor={{ false: "#767577", true: "#8e44ad" }}
+                trackColor={{ false: "#767577", true: "#6B63F6" }}
                 thumbColor={isConnected ? "#f4f3f4" : "#f4f3f4"}
               />
             </View>
@@ -77,46 +85,59 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#8e44ad',
+    backgroundColor: '#6B63F6',
   },
-  header: {
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  
   profile: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+
     alignItems: 'center',
     backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    margin: 16,
+    padding: wp('4%'),
+    borderRadius: wp('2%'),
+    margin: wp('4%'),
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    borderColor: 'blue',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: wp('12%'),
+    height: wp('12%'),
+    borderRadius: wp('6%'),
     backgroundColor: '#e0e0e0',
-    marginRight: 16,
+    marginRight: wp('4%'),
   },
   name: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
   },
   phone: {
     color: 'gray',
+    fontSize: wp('3.5%'),
   },
   sosDevice: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    margin: 16,
+    padding: wp('4%'),
+    borderRadius: wp('2%'),
+    margin: wp('4%'),
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   sosText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: 'bold',
   },
   switchContainer: {
@@ -124,23 +145,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   settingsGrid: {
+    
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: wp('4%'),
   },
   settingItem: {
-    width: '30%',
+    width: wp('28%'),
     aspectRatio: 1,
     backgroundColor: 'white',
-    borderRadius: 8,
+    borderRadius: wp('2%'),
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: wp('4%'),
   },
   settingText: {
-    marginTop: 8,
-    fontSize: 12,
+    marginTop: hp('1%'),
+    fontSize: wp('3%'),
     textAlign: 'center',
   },
   safeArea: {
@@ -160,7 +182,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp("3%"),
     elevation: 4,
-    marginTop: hp("4%"),
   },
   centeredContent: {
     flex: 1,

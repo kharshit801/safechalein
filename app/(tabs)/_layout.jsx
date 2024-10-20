@@ -104,6 +104,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name="book-sharp" color={color} size={24} focused={focused} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen

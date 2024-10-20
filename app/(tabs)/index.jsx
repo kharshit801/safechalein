@@ -81,7 +81,7 @@ const HomeScreen = () => {
               style={styles.logo}
             />
             <Ionicons
-              name="settings"
+              name="person"
               size={wp("6%")}
               color="#6b63f6"
               style={styles.notificationIcon}
@@ -175,7 +175,6 @@ const styles = StyleSheet.create({
     paddingVertical: hp("1%"),
     alignItems: "center",
     elevation: 4,
-    marginTop: hp("4%"),
   },
   header2: {
     paddingHorizontal: wp("3%"),
