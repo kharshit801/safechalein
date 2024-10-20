@@ -4,7 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Scro
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const SignupPage = () => {
-  const [fullName, setFullName] = useState('');
+  const [fullname, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
@@ -13,7 +13,7 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://172.29.49.198:8080/user/signup', {
+      const response = await axios.post('https://backendof-sf.vercel.app/user/signup', {
         fullname: fullname,
         email:email,
         password:password,
@@ -48,7 +48,7 @@ const SignupPage = () => {
               <TextInput
                 style={styles.input}
                 placeholder="Harshit Kumar"
-                value={fullName}
+                value={fullname}
                 onChangeText={setFullName}
                 autoCapitalize="words"
               />

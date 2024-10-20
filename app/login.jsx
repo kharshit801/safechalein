@@ -12,12 +12,12 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      // const response = await axios.post('http://172.29.49.198:8080/user/login', {
-      //   email: email,
-      //   password: password,
-      // });
-      // setSuccessMessage('Logged in successfully!');
-      // setErrorMessage('');
+      const response = await axios.post('https://backendof-sf.vercel.app/user/login', {
+        email: email,
+        password: password,
+      });
+      setSuccessMessage('Logged in successfully!');
+      setErrorMessage('');
       router.replace("(tabs)");
     } catch (error) {
       setErrorMessage(error.response?.data.message || 'An error occurred during login.');
