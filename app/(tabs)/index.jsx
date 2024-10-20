@@ -41,7 +41,7 @@ const HomeScreen = () => {
 
   const sendSOSCall = async () => {
     try {
-      const response = await fetch("http://172.29.49.198:3000/callSOS", {
+      const response = await fetch("https://backendof-sf.vercel.app/callSOS", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
