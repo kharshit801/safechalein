@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,7 @@ import {
   StatusBar,
   TouchableOpacity,
   Alert,
+  Modal,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -17,56 +18,57 @@ import AppMapview from "./../Mapview";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-// Send SOS call function - triggers the API call to send an SOS alert
-const sendSOSCall = async () => {
-  try {
-    const response = await fetch('http://172.29.49.198:3000/callSOS', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}) // No location data sent
-    });
-
-    // Log the response for debugging
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
-
-    const text = await response.text();
-    console.log('Response text:', text);
-
-    // Attempt to parse the response and handle success or error accordingly
-    try {
-      const result = JSON.parse(text);
-      console.log('SOS call response:', result);
-      Alert.alert('Success', 'SOS call initiated successfully');
-    } catch (parseError) {
-      console.log('Error parsing JSON:', parseError);
-      Alert.alert('Error', 'Received invalid response from server');
-    }
-  } catch (error) {
-    // Handle network or other errors
-    console.log('Error sending SOS call:', error);
-    Alert.alert('Error', 'Failed to send SOS call');
-  }
-};
-
 const HomeScreen = () => {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [countdown, setCountdown] = useState(5); // Set the initial countdown to 5 seconds
+  const [isSOSCancelled, setIsSOSCancelled] = useState(false);
 
-  // This function asks for confirmation before sending the SOS call
-  // const handleSOSPress = () => {
-  //   Alert.alert("SOS", "Are you sure you want to send an SOS?", [
-  //     {
-  //       text: "Cancel",
-  //       style: "cancel",
-  //     },
-  //     {
-  //       text: "Yes",
-  //       onPress: sendSOSCall, // Use function reference, not invocation
-  //     },
-  //   ]);
-  // };
+  // Effect to handle countdown
+  useEffect(() => {
+    let timer;
+    if (modalVisible && countdown > 0 && !isSOSCancelled) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (countdown === 0 && !isSOSCancelled) {
+      sendSOSCall();
+      setModalVisible(false); // Close modal after sending SOS
+    }
+    return () => clearTimeout(timer); // Cleanup timer on unmount
+  }, [modalVisible, countdown, isSOSCancelled]);
+
+  // Send SOS call function - triggers the API call to send an SOS alert
+  const sendSOSCall = async () => {
+    try {
+      const response = await fetch('http://172.29.49.198:3000/callSOS', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}) // No location data sent
+      });
+
+      const text = await response.text();
+      console.log('SOS call response:', text);
+      Alert.alert('Success', 'SOS call initiated successfully');
+    } catch (error) {
+      console.log('Error sending SOS call:', error);
+      Alert.alert('Error', 'Failed to send SOS call');
+    }
+  };
+
+  // Function to handle SOS button press
+  const handleSOSPress = () => {
+    setIsSOSCancelled(false);  // Reset cancellation flag
+    setCountdown(5);           // Reset the countdown
+    setModalVisible(true);     // Show modal
+  };
+
+  // Function to cancel SOS call
+  const cancelSOSCall = () => {
+    setIsSOSCancelled(true);   // Set cancellation flag
+    setModalVisible(false);    // Hide modal
+    Alert.alert("Cancelled", "SOS call has been cancelled");
+  };
 
   return (
     <>
@@ -81,10 +83,11 @@ const HomeScreen = () => {
               style={styles.logo}
             />
             <Ionicons
-              name="notifications"
+              name="settings"
               size={wp("6%")}
               color="#6b63f6"
               style={styles.notificationIcon}
+              onPress={() => router.replace("Settings")}
             />
           </View>
 
@@ -104,15 +107,37 @@ const HomeScreen = () => {
             </View>
           </View>
 
-          {/* Map view displaying current location or other data */}
+          
           <View style={styles.content}>
             <AppMapview />
           </View>
 
           {/* SOS Button - initiates the SOS call */}
-          <TouchableOpacity style={styles.sosButton} onPress={sendSOSCall}>
+          <TouchableOpacity style={styles.sosButton} onPress={handleSOSPress}>
             <Text style={styles.sosButtonText}>SOS</Text>
           </TouchableOpacity>
+
+          {/* Modal for countdown before sending SOS */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Sending SOS in {countdown} seconds...
+                </Text>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={cancelSOSCall}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel SOS</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </SafeAreaView>
     </>
@@ -207,9 +232,38 @@ const styles = StyleSheet.create({
     fontSize: wp("5%"),
     fontWeight: "bold",
   },
-  Text1: {
-    color: "black",
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    width: wp("80%"),
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalText: {
     fontSize: wp("5%"),
+    fontWeight: "bold",
+    marginBottom: hp("2%"),
+  },
+  cancelButton: {
+    backgroundColor: "#DB2B39",
+    paddingVertical: hp("1%"),
+    paddingHorizontal: wp("4%"),
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontSize: wp("4%"),
     fontWeight: "bold",
   },
 });
