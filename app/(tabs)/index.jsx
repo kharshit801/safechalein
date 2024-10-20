@@ -90,17 +90,21 @@ const HomeScreen = () => {
           </View>
 
           <View style={styles.header2}>
-            <Text style={styles.Text1}>Add Friends</Text>
             <View style={styles.friendContainer}>
+            <Text style={styles.Text1}>Add Friends</Text>
+
               <Text style={styles.friendInfo}>
                 Add a friend to use SOS and Track them.
               </Text>
+            
+            </View>
+            <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={() => router.replace("Addfriend")}>
                 <View style={styles.button}>
                   <Text style={styles.buttonText}>Add Friends</Text>
                 </View>
               </TouchableOpacity>
-            </View>
+              </View>
           </View>
 
           <View style={styles.content}>
@@ -177,16 +181,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   header2: {
+    flexDirection: "row",
+  
     paddingHorizontal: wp("3%"),
     paddingVertical: hp("1%"),
     backgroundColor: "#f2f2f2",
     borderRadius: wp("2%"),
-    marginVertical: hp("1%"),
   },
   friendContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    textAlign: "flex-start",
   },
   friendInfo: {
     fontSize: wp("3.4%"),
@@ -208,6 +214,10 @@ const styles = StyleSheet.create({
   },
   notificationIcon: {
     padding: 5,
+  },
+  buttonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     flex: 1,

@@ -62,7 +62,7 @@ const Addfriends = () => {
               name="arrow-back"
               size={wp("6%")}
               color="#6b63f6"
-            onPress={() => router.replace("index")}
+            onPress={() => router.replace("/(tabs)")}
             />
             <Image
               source={require("./././../assets/images/logo-3.png")}
