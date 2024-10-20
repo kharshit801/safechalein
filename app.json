@@ -16,7 +16,9 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       }
     },
     "android": {
@@ -24,14 +26,18 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "VIBRATE",
-        "MODIFY_AUDIO_SETTINGS"
+        "MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ],
-    
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBzXNtnt_1DmStzHrQFnuXjQurO4m6QSwI"
         }
-      }
+      },
+      "package": "com.abhishek2027.safechalein"
     },
     "package": "com.abhishek2027.safechalein",
     "web": {
@@ -46,7 +52,6 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
         }
       ],
-      
       "expo-router",
       [
         "expo-location",

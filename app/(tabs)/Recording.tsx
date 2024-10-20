@@ -5,6 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { startRecording, stopRecording } from '../utils/recordingUtils';
 import { saveRecording, getRecordings, Recording as RecordingType } from '../utils/databaseUtils';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type RootStackParamList = {
   Recording: undefined;
@@ -112,8 +116,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   logo: {
-    width: 80,
-    height: 100,
+    width: wp('50%'),
+    height: hp('15%'),
   },
   content: {
     flex: 1,
