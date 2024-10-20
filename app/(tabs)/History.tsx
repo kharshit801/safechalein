@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: wp('4%'),
     backgroundColor: '#fff',
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   title: {
     marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp('3%') ,

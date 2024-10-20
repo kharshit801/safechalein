@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp("3%"),

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, StatusBar, SafeAreaView, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, StatusBar, SafeAreaView, Image, Alert ,Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#6B63F6',
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   
   profile: {
@@ -226,6 +227,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#fff",
+    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   container: {
     flex: 1,
