@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Platform,StatusBar, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -67,7 +67,7 @@ const Recording: React.FC = () => {
     <SafeAreaView style={styles.container}>
      
       <View style={styles.content}>
-        <Text style={styles.contentTitle}>Anonymous Recording</Text>
+        <Text style={styles.header}>Anonymous Recording</Text>
         <Text style={styles.contentSubtitle}>
           Anonymously record audio and location without notifying others.
         </Text>
@@ -103,25 +103,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
+
+    marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp("3%"),
+    marginHorizontal: wp('5%'),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: wp('4%'),
+
+    fontSize: wp('7%'),
+    fontWeight: '700',
+    color: '#1A1A1A',
   },
   logo: {
+    borderWidth: 1,
+    borderColor: "blue",
     width: wp('50%'),
     height: hp('15%'),
   },
   content: {
+  
     flex: 1,
   },
-  contentTitle: {
-    fontSize: wp('7%'),
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginVertical: hp('3%'),
-    marginHorizontal: wp('5%'),
-  },
+
   contentSubtitle: {
     fontSize: wp('4%'),
     color: '#666',

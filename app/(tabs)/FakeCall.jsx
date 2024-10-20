@@ -9,7 +9,8 @@ import {
   Vibration,
   ScrollView,
   Modal,
-  FlatList,
+  Platform,
+  StatusBar,
   Alert,
 } from 'react-native';
 import { Audio } from 'expo-av';
@@ -223,7 +224,7 @@ const renderOngoingCallScreen = () => (
   
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.safeArea}>
         <View style={styles.header}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Caller Details</Text>
@@ -336,16 +337,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-  container: {
-    flex: 1,
-  },
+ 
   header: {
+
+
    
+    marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp("3%"),
+    
+    marginHorizontal: wp('5%'),
     color: '#1A1A1A',
   },
-  backButton: {
-    marginBottom: hp('1%'),
-  },
+ 
   backButtonText: {
     fontSize: wp('6%'),
     color: '#333',
@@ -355,11 +357,8 @@ const styles = StyleSheet.create({
     fontSize: wp('7%'),
     fontWeight: '700',
     color: '#1A1A1A',
-    marginVertical: hp('3%'),
-    marginHorizontal: wp('5%'),
   },
   headerSubtitle: {
-    marginHorizontal: wp('5%'),
     fontSize: wp('3.5%'),
     color: '#666',
   },

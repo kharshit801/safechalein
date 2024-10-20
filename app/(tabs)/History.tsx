@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getRecordings, Recording as RecordingType } from '../utils/databaseUtils';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -67,10 +67,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
+    marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp('3%') ,
     fontSize: wp('7%'),
     fontWeight: '700',
     color: '#1A1A1A',
-    marginVertical: hp('3%'),
     marginHorizontal: wp('5%'),
   },
   item: {

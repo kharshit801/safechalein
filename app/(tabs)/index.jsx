@@ -10,6 +10,7 @@ import {
   Alert,
   Modal,
   Switch,
+  Platform,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -74,37 +75,38 @@ const HomeScreen = () => {
       <StatusBar backgroundColor="#ccc" barStyle="dark-content" />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Ionicons name="menu" size={wp("6%")} color="#6b63f6" />
-            <Image
-              source={require("../../assets/images/logo-3.png")}
-              style={styles.logo}
-            />
-            <Ionicons
-              name="person"
-              size={wp("6%")}
-              color="#6b63f6"
-              style={styles.notificationIcon}
-              onPress={() => router.replace("Settings")}
-            />
-          </View>
-
-          <View style={styles.header2}>
-            <View style={styles.friendContainer}>
-            <Text style={styles.Text1}>Add Friends</Text>
-
-              <Text style={styles.friendInfo}>
-                Add a friend to use SOS and Track them.
-              </Text>
-            
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <Ionicons name="menu" size={wp("6%")} color="#6b63f6" />
+              <Image
+                source={require("../../assets/images/logo-3.png")}
+                style={styles.logo}
+              />
+              <Ionicons
+                name="person"
+                size={wp("6%")}
+                color="#6b63f6"
+                style={styles.notificationIcon}
+                onPress={() => router.replace("Settings")}
+              />
             </View>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={() => router.replace("Addfriend")}>
-                <View style={styles.button}>
-                  <Text style={styles.buttonText}>Add Friends</Text>
-                </View>
-              </TouchableOpacity>
+
+            <View style={styles.header2}>
+              <View style={styles.friendContainer}>
+                <Text style={styles.Text1}>Add Friends</Text>
+
+                <Text style={styles.friendInfo}>
+                  Add a friend to use SOS and Track them.
+                </Text>
               </View>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => router.replace("Addfriend")}>
+                  <View style={styles.button}>
+                    <Text style={styles.buttonText}>Add Friends</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
           <View style={styles.content}>
@@ -169,6 +171,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  headerContainer: {
+    marginVertical:
+      Platform.OS === "android" ? StatusBar.currentHeight : hp("3%"),
+    
+  },
   header: {
     flexDirection: "row",
     height: hp("8%"),
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
   },
   header2: {
     flexDirection: "row",
-  
+
     paddingHorizontal: wp("3%"),
     paddingVertical: hp("1%"),
     backgroundColor: "#f2f2f2",
@@ -220,6 +227,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
+    
     flex: 1,
   },
   logo: {
@@ -232,7 +240,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: wp("4%"),
-   
   },
   preferenceContainer: {
     flex: 1,

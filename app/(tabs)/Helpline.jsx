@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, SafeAreaView ,Platform,StatusBar} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -57,10 +57,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   header: {
+    marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp("3%"),
     fontSize: wp('7%'),
     fontWeight: '700',
     color: '#1A1A1A',
-    marginVertical: hp('3%'),
     marginHorizontal: wp('5%'),
   },
   listContainer: {
