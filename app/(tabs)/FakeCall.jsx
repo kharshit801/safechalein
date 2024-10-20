@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
 
 
    
-    marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp("3%"),
+    // marginVertical: Platform.OS === 'android' ? StatusBar.currentHeight : hp("3%"),
     
     marginHorizontal: wp('5%'),
     color: '#1A1A1A',
