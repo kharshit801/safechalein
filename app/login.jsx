@@ -1,27 +1,44 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity,Image, StyleSheet, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [keepSignedIn, setKeepSignedIn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
     try {
       const response = await axios.post('https://backendof-sf.vercel.app/user/login', {
         email: email,
         password: password,
       });
-      setSuccessMessage('Logged in successfully!');
-      setErrorMessage('');
+
+      // Store user data in AsyncStorage
+      await AsyncStorage.setItem('userData', JSON.stringify(response.data.user));
+      if (keepSignedIn) {
+        await AsyncStorage.setItem('keepSignedIn', 'true');
+      }
+
+      Alert.alert('Success', 'Logged in successfully!');
       router.replace("(tabs)");
     } catch (error) {
-      setErrorMessage(error.response?.data.message || 'An error occurred during login.');
-      setSuccessMessage('');
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || 'An error occurred during login.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,10 +90,15 @@ const LoginPage = () => {
                 <Text style={styles.checkboxLabel}>Keep me signed in</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.loginButton} onPress={() => router.replace("(tabs)")}>
-                <Text style={styles.loginButtonText}>Login</Text>
-              </TouchableOpacity>
-
+              <TouchableOpacity 
+    style={[styles.loginButton, loading && styles.disabledButton]} 
+    onPress={handleLogin}
+    disabled={loading}
+  >
+    <Text style={styles.loginButtonText}>
+      {loading ? 'Logging in...' : 'Login'}
+    </Text>
+  </TouchableOpacity>
               <Text style={styles.orText}>or sign in with</Text>
 
               <TouchableOpacity style={styles.googleButton}>
@@ -222,6 +244,9 @@ const styles = StyleSheet.create({
   createAccountText: {
     color: '#6B63F6',
     fontSize: wp('4%'),
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
 });
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, StatusBar, SafeAreaView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, StatusBar, SafeAreaView, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -9,14 +10,71 @@ import {
 
 const SettingsScreen = () => {
   const [isConnected, setIsConnected] = React.useState(false);
-  const router = useRouter(); 
+  const router = useRouter();
 
-  const SettingItem = ({ icon, title }) => (
-    <TouchableOpacity style={styles.settingItem}>
-      <Ionicons name={icon} size={wp('6%')} color="#6B63F6" />
-      <Text style={styles.settingText}>{title}</Text>
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // Clear all stored data
+              await AsyncStorage.multiRemove(['userData', 'keepSignedIn']);
+              // Navigate to login screen
+              router.replace('/');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to logout. Please try again.');
+            }
+          }
+        }
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const SettingItem = ({ icon, title, onPress }) => (
+    <TouchableOpacity 
+      style={[
+        styles.settingItem, 
+        title === 'Log Out' && styles.logoutItem
+      ]} 
+      onPress={onPress}
+    >
+      <Ionicons 
+        name={icon} 
+        size={wp('6%')} 
+        color={title === 'Log Out' ? '#FF3B30' : '#6B63F6'} 
+      />
+      <Text style={[
+        styles.settingText,
+        title === 'Log Out' && styles.logoutText
+      ]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
+
+  const handleSettingPress = (title) => {
+    switch (title) {
+      case 'Log Out':
+        handleLogout();
+        break;
+      case 'History':
+        break;
+      case 'Friends':
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <>
@@ -35,18 +93,14 @@ const SettingsScreen = () => {
 
           <View style={styles.profile}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={styles.avatar} >
-
-            <Ionicons name="person" size={wp("6%")} color="#6b63f6" />
-            
-
+              <View style={styles.avatar}>
+                <Ionicons name="person" size={wp("6%")} color="#6b63f6" />
+              </View>
+              <View>
+                <Text style={styles.name}>Team Auxin</Text>
+                <Text style={styles.phone}>+91 9621456342</Text>
+              </View>
             </View>
-            <View>
-              <Text style={styles.name}>Team Auxin</Text>
-              <Text style={styles.phone}>+91 9621456342</Text>
-            </View>
-            </View>
-         
             <TouchableOpacity style={{paddingLeft: wp('5%')}}>
               <Ionicons name="pencil" size={wp('6%')} color="#6B63F6" />
             </TouchableOpacity>
@@ -66,15 +120,19 @@ const SettingsScreen = () => {
           </View>
 
           <View style={styles.settingsGrid}>
-            <SettingItem icon="time-outline" title="History" />
-            <SettingItem icon="people-outline" title="Friends" />
-            <SettingItem icon="list-outline" title="Block List" />
-            <SettingItem icon="chatbubble-outline" title="Feedback" />
-            <SettingItem icon="document-text-outline" title="Legal" />
-            <SettingItem icon="help-circle-outline" title="Help" />
-            <SettingItem icon="language-outline" title="Language" />
-            <SettingItem icon="settings-outline" title="Settings" />
-            <SettingItem icon="log-out-outline" title="Log Out" />
+            <SettingItem icon="time-outline" title="History" onPress={() => handleSettingPress('History')} />
+            <SettingItem icon="people-outline" title="Friends" onPress={() => handleSettingPress('Friends')} />
+            <SettingItem icon="list-outline" title="Block List" onPress={() => handleSettingPress('Block List')} />
+            <SettingItem icon="chatbubble-outline" title="Feedback" onPress={() => handleSettingPress('Feedback')} />
+            <SettingItem icon="document-text-outline" title="Legal" onPress={() => handleSettingPress('Legal')} />
+            <SettingItem icon="help-circle-outline" title="Help" onPress={() => handleSettingPress('Help')} />
+            <SettingItem icon="language-outline" title="Language" onPress={() => handleSettingPress('Language')} />
+            <SettingItem icon="settings-outline" title="Settings" onPress={() => handleSettingPress('Settings')} />
+            <SettingItem 
+              icon="log-out-outline" 
+              title="Log Out" 
+              onPress={() => handleSettingPress('Log Out')} 
+            />
           </View>
         </View>
       </SafeAreaView>
@@ -198,6 +256,16 @@ const styles = StyleSheet.create({
     height: wp("28%"),
     resizeMode: "contain",
   },
+    // Add these new styles
+    logoutItem: {
+      borderWidth: 1,
+      borderColor: '#FF3B30',
+      backgroundColor: '#FFF',
+    },
+    logoutText: {
+      color: '#FF3B30',
+      fontWeight: '500',
+    }
 });
 
 export default SettingsScreen;
